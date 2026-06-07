@@ -1,195 +1,96 @@
-const params = new URLSearchParams(window.location.search);
+document.addEventListener('DOMContentLoaded', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode') || 'create';
+    const nik = urlParams.get('nik');
 
-const mode = params.get('mode');
-const nik = params.get('nik');
+    setupFormMode(mode);
 
-document.addEventListener('DOMContentLoaded', () => {
-    initializePage();
+    if (nik && (mode === 'edit' || mode === 'detail')) {
+        await loadPersonData(nik);
+    }
 
-    document
-        .getElementById('btnBack')
-        .addEventListener('click', () => {
+    // Back button handler
+    document.getElementById('btnBack').addEventListener('click', () => {
+        window.location.href = 'monitoring.html';
+    });
+
+    // Form submission handler
+    document.getElementById('personForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (mode === 'detail') return;
+
+        const formData = {
+            nik: document.getElementById('nik').value,
+            namaLengkap: document.getElementById('namaLengkap').value,
+            jenisKelamin: document.querySelector('input[name="jenisKelamin"]:checked')?.value || '',
+            tanggalLahir: document.getElementById('tanggalLahir').value,
+            alamat: document.getElementById('alamat').value,
+            negara: document.getElementById('negara').value
+        };
+
+        try {
+            if (mode === 'create') {
+                await createPerson(formData);
+                alert('Data berhasil disimpan');
+            } else if (mode === 'edit') {
+                await updatePerson(nik, formData);
+                alert('Data berhasil diperbarui');
+            }
             window.location.href = 'monitoring.html';
-        });
-
-    document.getElementById('personForm')
-        .addEventListener('submit', handleSubmit);
+        } catch (error) {
+            alert(error.message);
+        }
+    });
 });
 
-async function initializePage() {
+function setupFormMode(mode) {
+    const formTitle = document.getElementById('formTitle');
+    const btnSubmit = document.getElementById('btnSubmit');
+    const nikInput = document.getElementById('nik');
+    const allInputs = document.querySelectorAll('#personForm input, #personForm textarea, #personForm select');
+
     if (mode === 'create') {
-        setupCreateMode();
-        return;
-    }
-
-    if (mode === 'edit') {
-        await setupEditMode();
-        return;
-    }
-
-    if (mode === 'detail') {
-        await setupDetailMode();
-    }
-}
-
-function setupCreateMode() {
-    document.getElementById('formTitle').textContent =
-        'Tambah Data Pribadi';
-}
-
-async function setupEditMode() {
-    document.getElementById('formTitle').textContent =
-        'Edit Data Pribadi';
-
-    document.getElementById('nik').readOnly = true;
-}
-
-async function setupDetailMode() {
-    document.getElementById('formTitle').textContent =
-        'Detail Data Pribadi';
-
-    document.getElementById('btnSubmit').disabled = true;
-}
-
-async function setupEditMode() {
-    document.getElementById('formTitle').textContent =
-        'Edit Data Pribadi';
-
-    document.getElementById('nik').readOnly = true;
-
-    const person = await getPersonByNik(nik);
-
-    populateForm(person);
-}
-
-async function setupDetailMode() {
-    document.getElementById('formTitle').textContent =
-        'Detail Data Pribadi';
-
-    document.getElementById('btnSubmit').disabled = true;
-
-    const person = await getPersonByNik(nik);
-
-    populateForm(person);
-
-    disableFormFields();
-}
-
-function populateForm(person) {
-    document.getElementById('nik').value =
-        person.nik ?? '';
-
-    document.getElementById('namaLengkap').value =
-        person.namaLengkap ?? '';
-
-    document.getElementById('tanggalLahir').value =
-        person.tanggalLahir ?? '';
-
-    document.getElementById('alamat').value =
-        person.alamat ?? '';
-
-    document.getElementById('negara').value =
-        person.negara ?? '';
-
-    if (person.jenisKelamin === 'Laki-Laki') {
-        document.getElementById('jenisKelaminL').checked = true;
-    }
-
-    if (person.jenisKelamin === 'Perempuan') {
-        document.getElementById('jenisKelaminP').checked = true;
+        formTitle.textContent = 'Data Pribadi - Tambah';
+        btnSubmit.textContent = 'Simpan';
+        btnSubmit.classList.add('btn-black');
+    } else if (mode === 'edit') {
+        formTitle.textContent = 'Data Pribadi - Edit';
+        btnSubmit.textContent = 'Ubah';
+        btnSubmit.classList.add('btn-black');
+        nikInput.readOnly = true;
+    } else if (mode === 'detail') {
+        formTitle.textContent = 'Data Pribadi - Detail';
+        btnSubmit.style.display = 'none'; // Hide submit button in detail mode
+        
+        allInputs.forEach(input => {
+            if (input.type === 'radio') {
+                input.disabled = true;
+            } else {
+                input.readOnly = true;
+                input.disabled = true; // Disable select/date inputs
+            }
+        });
     }
 }
 
-function disableFormFields() {
-    document.getElementById('nik')
-        .readOnly = true;
-
-    document.getElementById('namaLengkap')
-        .readOnly = true;
-
-    document.getElementById('tanggalLahir')
-        .readOnly = true;
-
-    document.getElementById('alamat')
-        .readOnly = true;
-
-    document.getElementById('negara')
-        .disabled = true;
-
-    document.getElementById('jenisKelaminL')
-        .disabled = true;
-
-    document.getElementById('jenisKelaminP')
-        .disabled = true;
-}
-
-async function setupEditMode() {
+async function loadPersonData(nik) {
     try {
-        document.getElementById('formTitle').textContent =
-            'Edit Data Pribadi';
-
-        document.getElementById('nik').readOnly = true;
-
         const person = await getPersonByNik(nik);
-
-        populateForm(person);
-
-    } catch (error) {
-        alert(error.message);
-        window.location.href = 'monitoring.html';
-    }
-}
-
-function getFormData() {
-    return {
-        nik: document.getElementById('nik').value.trim(),
-        namaLengkap: document.getElementById('namaLengkap').value.trim(),
-        jenisKelamin: document.querySelector(
-            'input[name="jenisKelamin"]:checked'
-        )?.value || null,
-        tanggalLahir:
-            document.getElementById('tanggalLahir').value || null,
-        alamat:
-            document.getElementById('alamat').value.trim(),
-        negara:
-            document.getElementById('negara').value || null
-    };
-}
-
-async function handleSubmit(event) {
-    event.preventDefault();
-
-    try {
-
-        const formData = getFormData();
-
-        if (mode === 'create') {
-            await createPerson(formData);
-            alert('Data berhasil ditambahkan');
+        
+        document.getElementById('nik').value = person.nik;
+        document.getElementById('namaLengkap').value = person.namaLengkap;
+        
+        if (person.jenisKelamin === 'Laki-Laki') {
+            document.getElementById('jenisKelaminL').checked = true;
+        } else if (person.jenisKelamin === 'Perempuan') {
+            document.getElementById('jenisKelaminP').checked = true;
         }
 
-        if (mode === 'edit') {
-            await updatePerson(nik, formData);
-            alert('Data berhasil diperbarui');
-        }
-
-        window.location.href = 'monitoring.html';
-
+        document.getElementById('tanggalLahir').value = person.tanggalLahir;
+        document.getElementById('alamat').value = person.alamat;
+        document.getElementById('negara').value = person.negara;
     } catch (error) {
-        handleError(error);
+        alert('Gagal mengambil data: ' + error.message);
+        window.location.href = 'monitoring.html';
     }
-}
-
-function handleError(error) {
-    if (error.status === 400) {
-
-        const messages =
-            Object.values(error.errors).join('\n');
-
-        alert(messages);
-
-        return;
-    }
-
-    alert(error.message || 'Terjadi kesalahan');
 }

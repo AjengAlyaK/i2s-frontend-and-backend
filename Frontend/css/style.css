@@ -1,0 +1,30 @@
+/* Custom Button Styles - Clean Overrides */
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8125rem;
+    border-radius: 4px;
+}
+
+/* New Black Button Style */
+.btn-black {
+    background-color: #000000;
+    color: #ffffff;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.btn-black:hover {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+/* Table Enhancements */
+.table td {
+    vertical-align: middle;
+}
+
+/* Card Enhancements */
+.card-title {
+    font-weight: 600;
+    color: #495057;
+}
