@@ -10,7 +10,8 @@ public interface PersonService {
 
     List<PersonResponse> getAll(
         String nik,
-        String namaLengkap
+        String namaLengkap,
+        String negara
     );
 
     PersonResponse getByNik(String nik);
