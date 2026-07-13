@@ -37,9 +37,10 @@ public class PersonController {
     @GetMapping
     public List<PersonResponse> getAll(
             @RequestParam(required = false) String nik,
-            @RequestParam(required = false) String namaLengkap
+            @RequestParam(required = false) String namaLengkap,
+            @RequestParam(required = false) String negara
     ) {
-        return personService.getAll(nik, namaLengkap);
+        return personService.getAll(nik, namaLengkap, negara);
     }
 
     @PutMapping("/{nik}")

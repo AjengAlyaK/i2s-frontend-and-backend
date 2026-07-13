@@ -12,10 +12,13 @@ public interface PersonRepository extends JpaRepository<Person, String> {
 
     List<Person> findByNikContaining(String nik);
 
+    List<Person> findByNegaraContainingIgnoreCase(String negara);
+
     List<Person> findByNamaLengkapContainingIgnoreCase(String namaLengkap);
 
-    List<Person> findByNikContainingAndNamaLengkapContainingIgnoreCase(
+    List<Person> findByNikContainingAndNamaLengkapAndNegaraContainingIgnoreCase(
             String nik,
-            String namaLengkap
+            String namaLengkap,
+            String negara
     );
 }

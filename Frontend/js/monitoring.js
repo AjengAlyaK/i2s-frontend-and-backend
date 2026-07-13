@@ -14,7 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const params = {
             nik: document.getElementById('searchNik').value,
-            namaLengkap: document.getElementById('searchNama').value
+            namaLengkap: document.getElementById('searchNama').value,
+            negara: document.getElementById('negara').value
         };
         currentPage = 1; // Reset to page 1 on new search
         loadTableData(params);
@@ -49,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadTableData(params = {}) {
     const tableBody = document.getElementById('personTableBody');
     const paginationEl = document.getElementById('pagination');
-    
+
     tableBody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">Memuat data...</td></tr>';
     paginationEl.innerHTML = '';
 
@@ -104,7 +105,6 @@ function renderTable() {
 function renderPagination() {
     const paginationEl = document.getElementById('pagination');
     paginationEl.innerHTML = '';
-    
     const totalPages = Math.ceil(allPersons.length / pageSize);
     if (totalPages <= 1) return;
 

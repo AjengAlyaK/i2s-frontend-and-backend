@@ -21,25 +21,30 @@ public class PersonServiceImpl implements PersonService {
     private final PersonRepository personRepository;
 
     @Override
-    public List<PersonResponse> getAll(String nik, String namaLengkap) {
+    public List<PersonResponse> getAll(String nik, String namaLengkap, String negara) {
 
         List<Person> persons;
 
         boolean hasNik = nik != null && !nik.isBlank();
         boolean hasNama = namaLengkap != null && !namaLengkap.isBlank();
+        boolean hasNegara = negara != null && !negara.isBlank();
 
-        if (hasNik && hasNama) {
+        if (hasNik && hasNama && hasNegara) {
             persons = personRepository
-                    .findByNikContainingAndNamaLengkapContainingIgnoreCase(
+                    .findByNikContainingAndNamaLengkapAndNegaraContainingIgnoreCase(
                             nik,
-                            namaLengkap
+                            namaLengkap,
+                            negara
                     );
-
+                    
         } else if (hasNik) {
             persons = personRepository.findByNikContaining(nik);
         } else if (hasNama) {
             persons = personRepository
                 .findByNamaLengkapContainingIgnoreCase(namaLengkap);
+        } else if (hasNegara) {
+            persons = personRepository
+                .findByNegaraContainingIgnoreCase(negara);
         } else {
             persons = personRepository.findAll();
         }

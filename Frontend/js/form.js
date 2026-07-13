@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     setupFormMode(mode);
 
+    document.getElementById('tanggalLahir').max = new Date().toLocaleDateString('en-CA');
+
     if (nik && (mode === 'edit' || mode === 'detail')) {
         await loadPersonData(nik);
     }
