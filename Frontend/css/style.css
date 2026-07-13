@@ -105,3 +105,20 @@ body {
 .pagination .page-link:focus {
     box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.25);
 }
+
+/* Gender Row Coloring */
+.table tr.row-male td {
+    background-color: #e6f2ff !important; 
+}
+
+.table tr.row-male:hover td {
+    background-color: #cce3ff !important; 
+}
+
+.table tr.row-female td {
+    background-color: #fff0f5 !important; 
+}
+
+.table tr.row-female:hover td {
+    background-color: #ffd1df !important; 
+}

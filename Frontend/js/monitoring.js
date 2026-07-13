@@ -79,6 +79,14 @@ function renderTable() {
     paginatedPersons.forEach((person, index) => {
         const row = document.createElement('tr');
         const displayIndex = start + index + 1;
+        
+        const gender = (person.jenisKelamin || '').toLowerCase();
+        if (gender === 'laki-laki' || gender === 'male') {
+            row.classList.add('row-male');
+        } else if (gender === 'perempuan' || gender === 'female') {
+            row.classList.add('row-female');
+        }
+
         row.innerHTML = `
             <td>${displayIndex}</td>
             <td>${person.nik}</td>
