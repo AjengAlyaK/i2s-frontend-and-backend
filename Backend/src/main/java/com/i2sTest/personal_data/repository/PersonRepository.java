@@ -16,7 +16,22 @@ public interface PersonRepository extends JpaRepository<Person, String> {
 
     List<Person> findByNamaLengkapContainingIgnoreCase(String namaLengkap);
 
-    List<Person> findByNikContainingAndNamaLengkapAndNegaraContainingIgnoreCase(
+    List<Person> findByNikContainingAndNamaLengkapContainingIgnoreCase(
+            String nik,
+            String namaLengkap
+    );
+
+    List<Person> findByNikContainingAndNegaraContainingIgnoreCase(
+            String nik,
+            String negara
+    );
+
+    List<Person> findByNamaLengkapContainingIgnoreCaseAndNegaraContainingIgnoreCase(
+            String namaLengkap,
+            String negara
+    );
+
+    List<Person> findByNikContainingAndNamaLengkapContainingIgnoreCaseAndNegaraContainingIgnoreCase(
             String nik,
             String namaLengkap,
             String negara

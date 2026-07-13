@@ -31,12 +31,28 @@ public class PersonServiceImpl implements PersonService {
 
         if (hasNik && hasNama && hasNegara) {
             persons = personRepository
-                    .findByNikContainingAndNamaLengkapAndNegaraContainingIgnoreCase(
+                    .findByNikContainingAndNamaLengkapContainingIgnoreCaseAndNegaraContainingIgnoreCase(
                             nik,
                             namaLengkap,
                             negara
                     );
-                    
+        } else if (hasNik && hasNama) {
+            persons = personRepository
+                    .findByNikContainingAndNamaLengkapContainingIgnoreCase(
+                            nik,
+                            namaLengkap
+                    );
+        } else if (hasNik && hasNegara) {
+            persons = personRepository.findByNikContainingAndNegaraContainingIgnoreCase(
+                    nik,
+                    negara
+            );
+        } else if (hasNama && hasNegara) {
+            persons = personRepository
+                    .findByNamaLengkapContainingIgnoreCaseAndNegaraContainingIgnoreCase(
+                            namaLengkap,
+                            negara
+                    );
         } else if (hasNik) {
             persons = personRepository.findByNikContaining(nik);
         } else if (hasNama) {
